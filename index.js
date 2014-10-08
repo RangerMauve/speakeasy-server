@@ -5,9 +5,6 @@ var fs = require('fs');
 app.listen(process.env.PORT || 8080);
 
 io.on('connection', function(socket) {
-	socket.emit('news', {
-		hello: 'world'
-	});
 	socket.on('speak', function(data) {
 		var voice = data.voice
 		var message = "" + data.message;

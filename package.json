@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/RangerMauve/speakeasy-server",
   "dependencies": {
+    "express": "^4.9.5",
     "socket.io": "^1.1.0"
   }
 }

@@ -1,7 +1,6 @@
 var express = require("express");
 var app = express();
 var server = require('http').Server(app);
-var io = require('socket.io');
 var fs = require('fs');
 
 app.listen(process.env.PORT || 8080);
@@ -15,7 +14,7 @@ app.use(function(req, res, next) {
 	next();
 });
 
-io.listen(server, {
+var io = require('socket.io').listen(server, {
 	origins: '*:*'
 });
 

@@ -3,8 +3,6 @@ var app = express();
 var server = require('http').Server(app);
 var fs = require('fs');
 
-app.listen(process.env.PORT || 8080);
-
 app.disable('x-powered-by');
 
 app.use(function(req, res, next) {
@@ -28,3 +26,6 @@ io.on('connection', function(socket) {
 		});
 	});
 });
+
+console.log("Listening")
+app.listen(process.env.PORT || 8080);

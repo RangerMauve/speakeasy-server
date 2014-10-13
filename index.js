@@ -1,32 +1,32 @@
-var express = require("express");
-var app = express();
-var server = require('http').Server(app);
-var shoe = require("shoe");
+var WebSocketServer = require('ws').Server
+var websocket = require('websocket-stream');
 var events = new(require("events").EventEmitter);
 var par = require("par");
+var dnode = require("dnode");
 
 var nodes = [];
 
-app.disable('x-powered-by');
-
-app.use(function(req, res, next) {
-	res.setHeader('Access-Control-Allow-Origin', "*");
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-	res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-	res.header('Access-Control-Allow-Credentials', false);
-	next();
+console.log("Listening");
+var wss = new WebSocketServer({
+	port: process.env.PORT || 8080,
+	path: "/speakeasy"
 });
 
-var sock = shoe(function(stream) {
-	var node = dnode({
+wss.on("connection", function(ws) {
+	console.log("Got remote stream");
+	var stream = websocket(ws);
+	var d = dnode({
 		say: say_all
 	});
-	add_user(node);
-	stream.on("end", par(remove_user, node));
-	node.pipe(stream).pipe(node);
+	d.on("remote", function(node) {
+		add_user(node);
+		stream.on("end", par(remove_user, node));
+	})
+	d.pipe(stream).pipe(d);
 });
 
 function say_all(data) {
+	console.log("Saying",data);
 	nodes.forEach(node.handle_speak.bind(node, data));
 }
 
@@ -39,9 +39,3 @@ function remove_user(node) {
 		return n !== node;
 	})
 }
-
-// Installing dnode
-sock.install(server, '/speakeasy');
-
-console.log("Listening");
-app.listen(process.env.PORT || 8080);
